@@ -44,25 +44,7 @@ Built as a final-year portfolio project with a focus on clean backend architectu
 
 ---
 
-## Project Structure
 
-```
-travelSathi/
-├── cmd/
-│   └── api/
-│       └── main.go
-├── internal/
-│   ├── auth/
-│   ├── db/
-│   ├── handler/
-│   ├── middleware/
-│   └── model/
-├── .env
-├── go.mod
-└── README.md
-```
-
----
 
 ## Getting Started
 
@@ -100,30 +82,8 @@ PORT=8080
 
 ---
 
-## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/auth/register` | Register a new user |
-| POST | `/auth/login` | Login and get JWT token |
-| POST | `/trips/plan` | Generate an AI trip plan |
-| GET | `/trips` | Get all saved trips |
-| GET | `/trips/:id` | Get a specific trip |
-| DELETE | `/trips/:id` | Delete a trip |
 
----
-
-## Roadmap
-
-- [x] Project setup and structure
-- [ ] Database schema and connection
-- [ ] JWT authentication
-- [ ] AI trip planning endpoint
-- [ ] Save and retrieve trips
-- [ ] React frontend
-- [ ] Deployment
-
----
 
 ## Author
 
