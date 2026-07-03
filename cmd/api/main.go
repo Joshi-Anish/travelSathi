@@ -7,11 +7,12 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 
 	"github.com/Joshi-Anish/travelSathi/internal/db"
 	"github.com/Joshi-Anish/travelSathi/internal/handler"
+	authmiddleware "github.com/Joshi-Anish/travelSathi/internal/middleware"
 )
 
 func main() {
@@ -30,13 +31,24 @@ func main() {
 	log.Println("Successfully connected to database!")
 
 	authHandler := &handler.AuthHandler{DB: pool}
+	tripHandler := &handler.TripHandler{DB: pool}
 
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+	r.Use(chimiddleware.Logger)
+	r.Use(chimiddleware.Recoverer)
 
+	// Public routes
 	r.Post("/api/auth/register", authHandler.Register)
 	r.Post("/api/auth/login", authHandler.Login)
+
+	// Protected routes
+	r.Group(func(r chi.Router) {
+		r.Use(authmiddleware.AuthMiddleware)
+		r.Post("/api/trips", tripHandler.CreateTrip)
+		r.Get("/api/trips", tripHandler.GetTrips)
+		r.Get("/api/trips/{id}", tripHandler.GetTrip)
+		r.Delete("/api/trips/{id}", tripHandler.DeleteTrip)
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {
