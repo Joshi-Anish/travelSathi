@@ -32,6 +32,7 @@ func main() {
 
 	authHandler := &handler.AuthHandler{DB: pool}
 	tripHandler := &handler.TripHandler{DB: pool}
+	planHandler := &handler.PlanHandler{DB: pool}
 
 	r := chi.NewRouter()
 	r.Use(chimiddleware.Logger)
@@ -48,6 +49,7 @@ func main() {
 		r.Get("/api/trips", tripHandler.GetTrips)
 		r.Get("/api/trips/{id}", tripHandler.GetTrip)
 		r.Delete("/api/trips/{id}", tripHandler.DeleteTrip)
+		r.Post("/api/trips/{id}/plan", planHandler.GeneratePlan)
 	})
 
 	port := os.Getenv("PORT")
