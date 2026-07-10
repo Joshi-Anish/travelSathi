@@ -136,13 +136,13 @@ export default function Dashboard({ onLogout, onOpenTrip }) {
                 />
               </div>
               <div className="col-span-2">
-                <label className="text-sm text-gray-400 mb-1 block">Budget (USD) — optional</label>
+                <label className="text-sm text-gray-400 mb-1 block">Budget (NPR) — optional</label>
                 <input
                   type="number"
                   value={form.budget_usd}
                   onChange={(e) => setForm({ ...form, budget_usd: e.target.value })}
                   className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="500"
+                  placeholder="50000"
                 />
               </div>
             </div>
@@ -185,7 +185,7 @@ export default function Dashboard({ onLogout, onOpenTrip }) {
                     <h3 className="text-lg font-semibold">{trip.destination}</h3>
                     <p className="text-gray-400 text-sm mt-1">
                       {trip.duration_days} days · {trip.travelers} traveler{trip.travelers > 1 ? 's' : ''}
-                      {trip.budget_usd ? ` · $${trip.budget_usd} budget` : ''}
+                      {trip.budget_usd ? ` · NPR ${trip.budget_usd.toLocaleString()}` : ''}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
