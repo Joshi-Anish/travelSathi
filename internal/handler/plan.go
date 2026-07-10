@@ -37,7 +37,6 @@ func (h *PlanHandler) GeneratePlan(w http.ResponseWriter, r *http.Request) {
 	userClaims := claims.(*auth.Claims)
 	tripID := chi.URLParam(r, "id")
 
-	// Verify trip belongs to user
 	var destination string
 	var durationDays int
 	var travelers int
@@ -50,10 +49,8 @@ func (h *PlanHandler) GeneratePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Generate plan (mocked for now)
 	raw, route, itinerary, budget, tips := generateMockPlan(destination, durationDays, travelers)
 
-	// Save to DB
 	var plan tripPlan
 	err = h.DB.QueryRow(r.Context(),
 		`INSERT INTO trip_plans (trip_id, raw_response, route_summary, itinerary, budget_breakdown, local_tips)
@@ -69,7 +66,6 @@ func (h *PlanHandler) GeneratePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Update trip status to planned
 	h.DB.Exec(r.Context(),
 		`UPDATE trips SET status = 'planned' WHERE id = $1`,
 		tripID,
@@ -83,13 +79,13 @@ func (h *PlanHandler) GeneratePlan(w http.ResponseWriter, r *http.Request) {
 func generateMockPlan(destination string, days, travelers int) (raw, route string, itinerary, budget json.RawMessage, tips string) {
 	raw = "This is a mock Claude response for " + destination
 
-	route = "Fly to " + destination + " via Kathmandu. Local transport by taxi and hiking trails."
+	route = "Travel from Kathmandu to " + destination + " by tourist bus or flight. Local transport by taxi, jeep, and hiking trails."
 
 	itineraryData := []map[string]interface{}{}
 	for i := 1; i <= days; i++ {
 		itineraryData = append(itineraryData, map[string]interface{}{
 			"day":           i,
-			"title":         "Day " + fmt.Sprint(i) + " in " + destination,
+			"title":         fmt.Sprintf("Day %d in %s", i, destination),
 			"activities":    []string{"Morning hike", "Local sightseeing", "Evening at lakeside"},
 			"accommodation": "Local guesthouse",
 			"meals":         []string{"Breakfast included", "Lunch at local restaurant", "Dinner at hotel"},
@@ -99,17 +95,18 @@ func generateMockPlan(destination string, days, travelers int) (raw, route strin
 	itinerary = itineraryJSON
 
 	budgetData := map[string]interface{}{
-		"accommodation": 50 * days * travelers,
-		"food":          30 * days * travelers,
-		"transport":     40 * travelers,
-		"activities":    20 * days * travelers,
-		"total":         (50+30+20)*days*travelers + 40*travelers,
-		"currency":      "USD",
+		"kathmandu_to_destination": 2500 * travelers,
+		"local_transport":          500 * days * travelers,
+		"accommodation":            1500 * days * travelers,
+		"food":                     1000 * days * travelers,
+		"activities":               800 * days * travelers,
+		"total":                    2500*travelers + (500+1500+1000+800)*days*travelers,
+		"currency":                 "NPR",
 	}
 	budgetJSON, _ := json.Marshal(budgetData)
 	budget = budgetJSON
 
-	tips = "Best time to visit " + destination + " is October-November. Carry cash as ATMs are limited. Respect local customs."
+	tips = fmt.Sprintf("Best time to visit %s is October-November. Carry cash as ATMs are limited. Respect local customs.", destination)
 
 	return
 }
