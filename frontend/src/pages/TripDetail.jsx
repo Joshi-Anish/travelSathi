@@ -80,7 +80,7 @@ export default function TripDetail({ tripId, onBack, onLogout }) {
                 <h2 className="text-2xl font-bold">{trip.destination}</h2>
                 <p className="text-gray-400 text-sm mt-1">
                   {trip.duration_days} days · {trip.travelers} traveler{trip.travelers > 1 ? 's' : ''}
-                  {trip.budget_usd ? ` · $${trip.budget_usd} budget` : ''}
+                  {trip.budget_usd ? ` · NPR ${(trip.budget_usd * 133).toLocaleString()} budget` : ''}
                 </p>
               </div>
               <span className={`text-xs px-3 py-1 rounded-full font-medium ${
@@ -134,17 +134,25 @@ export default function TripDetail({ tripId, onBack, onLogout }) {
             {/* Budget */}
             <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
               <h3 className="text-lg font-semibold mb-4">Budget Breakdown</h3>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {Object.entries(plan.budget_breakdown)
                   .filter(([key]) => key !== 'currency')
                   .map(([key, value]) => (
                     <div key={key} className="flex justify-between text-sm">
-                      <span className="text-gray-400 capitalize">{key}</span>
+                      <span className="text-gray-400 capitalize">
+                        {key.replace(/_/g, ' ')}
+                      </span>
                       <span className={key === 'total' ? 'text-white font-semibold' : 'text-gray-300'}>
-                        ${value} {plan.budget_breakdown.currency}
+                        NPR {value.toLocaleString()}
                       </span>
                     </div>
                   ))}
+                <div className="border-t border-gray-800 pt-3 flex justify-between text-sm">
+                  <span className="text-white font-semibold">Total</span>
+                  <span className="text-white font-semibold">
+                    NPR {plan.budget_breakdown.total.toLocaleString()}
+                  </span>
+                </div>
               </div>
             </div>
 
